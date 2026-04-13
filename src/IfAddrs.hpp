@@ -4,6 +4,8 @@
 
 #include <ifaddrs.h>
 #include <netdb.h>
+#include <exception>
+#include <memory>
 
 class IfAddrs {
 public:

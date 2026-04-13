@@ -1,33 +1,14 @@
-#include <string>
-#include <print>
+#include "NetworkAdapterInfo.hpp"
+
 #include <ranges>
+#include <print>
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "IfAddrs.hpp"
 
-struct NetworkAdapterInfo { // Network Adapter Information
-    std::string interfaceName_, addressFamily, ipAddress;
-
-    NetworkAdapterInfo() = default;
-    NetworkAdapterInfo(const char* i, const char* f, const char *n)
-        : interfaceName_(i), addressFamily(f), ipAddress(n) {}
-};
-
-template <>
-struct std::formatter<NetworkAdapterInfo> {
-    constexpr auto parse(std::format_parse_context& ctx) {
-        return ctx.begin(); 
-    }
-
-    auto format(const NetworkAdapterInfo& n, std::format_context& ctx) const {
-        return std::format_to(ctx.out(), "{}\t{}\t\t{}", n.interfaceName_, n.addressFamily, n.ipAddress);
-    }
-};
-
-void listNetworkAdapterInfo() {
+void nw::listNetworkAdapterInfo() {
     static_assert(std::ranges::range<IfAddrs>);
     constexpr auto string_repr = [](ifaddrs &ia) {
         NetworkAdapterInfo networkAdapterInfo;
@@ -71,7 +52,3 @@ void listNetworkAdapterInfo() {
     
 }
 
-int main() {
-    listNetworkAdapterInfo();
-    return 0;
-}
