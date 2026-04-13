@@ -7,7 +7,8 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <ifaddrs.h>
+
+#include "IfAddrs.hpp"
 
 struct NetworkAdapterInfo { // Network Adapter Information
     std::string interfaceName_, addressFamily, ipAddress;
@@ -26,84 +27,6 @@ struct std::formatter<NetworkAdapterInfo> {
     auto format(const NetworkAdapterInfo& n, std::format_context& ctx) const {
         return std::format_to(ctx.out(), "{}\t{}\t\t{}", n.interfaceName_, n.addressFamily, n.ipAddress);
     }
-};
-
-class ListIterator {
-public:
-    using difference_type   = std::ptrdiff_t;
-    using value_type        = ifaddrs;
-    using pointer           = ifaddrs*;
-    using reference         = ifaddrs&;
-    using iterator_category = std::forward_iterator_tag;
-
-    ListIterator() = default;
-    explicit ListIterator(ifaddrs *i) 
-        : current_(i) {}
-
-    // Prefix
-    ListIterator& operator++() {
-        if (current_)
-            current_ = current_->ifa_next;
-
-        return *this;
-    }
-
-    // Postfix
-    ListIterator operator++(int) {
-        ListIterator temp(*this);
-        if (current_)
-            current_ = current_->ifa_next;
-
-        return temp;
-    }
-
-    reference operator*() const {
-        return *current_;
-    }
-
-    pointer operator->() const {
-        return &(operator*());
-    }
-
-    bool operator==(const ListIterator& other) const {
-        return current_ == other.current_;
-    }
-
-    bool operator!=(const ListIterator& other) const {
-        return !(*this == other);
-    }
-
-private:
-    value_type *current_;
-};
-
-class IfAddrs {
-public:
-    static constexpr auto deleter = [](ifaddrs *ia) {
-        if (ia)
-            freeifaddrs(ia);
-    };
-
-    explicit IfAddrs() : addr_list_(nullptr) {
-        struct ifaddrs *addresses; // TODO: Add RAII for this type
-
-        if (getifaddrs(&addresses) == -1) {
-            throw std::runtime_error("getifaddrs call failed");
-        }
-
-        addr_list_.reset(addresses);
-    }
-
-    ListIterator begin() const {
-        return ListIterator(addr_list_.get());
-    }
-
-    ListIterator end() const {
-        return ListIterator(nullptr);
-    }
-
-private:
-    std::unique_ptr<ifaddrs, decltype(deleter)> addr_list_;
 };
 
 
