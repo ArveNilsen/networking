@@ -1,4 +1,4 @@
-#include "NetworkAdapterInfo.hpp"
+#include <networking/NetworkAdapterInfo.hpp>
 
 #include <ranges>
 #include <print>
