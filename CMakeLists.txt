@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 4.2.1)
 
+enable_testing()
+
 if (NOT DEFINED CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 23)
 endif()
@@ -25,3 +27,4 @@ target_compile_features(project_options
 )
 
 add_subdirectory(src)
+add_subdirectory(test)

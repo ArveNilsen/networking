@@ -1,4 +1,6 @@
+#include <networking/Init.hpp>
+
 int main() {
-    listNetworkAdapterInfo();
+    Init init;
     return 0;
 }
