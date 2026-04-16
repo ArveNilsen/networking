@@ -10,6 +10,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include <print>
+#include <cerrno>
+
 namespace platform {
 int SocketPosixPolicy::open() {
     return ::socket(
@@ -45,12 +48,29 @@ std::error_code SocketPosixPolicy::bind(int fd, std::string_view addr) {
 }
 
 std::size_t SocketPosixPolicy::send(int fd, std::span<const std::byte> buf) {
+    std::println("Send buf size: {}", buf.size());
     return static_cast<std::size_t>(::send(fd, buf.data(), buf.size(), 0));
 }
 
 std::size_t SocketPosixPolicy::recv(int fd, std::span<std::byte> buf) {
+    std::println("Recv buf size: {}", buf.size());
     ssize_t n = ::recv(fd, buf.data(), buf.size(), 0);
+    if (n == -1)
+        std::println("errno {} {}", errno, std::strerror(errno));
     return n < 0 ? 0 : static_cast<std::size_t>(n);
 }
 
+std::error_code SocketPosixPolicy::listen(int fd, int backlog) {
+    if (::listen(fd, backlog) != 0)
+        return std::error_code{errno, std::generic_category()};
+
+    return {};
+}
+
+int SocketPosixPolicy::accept(int fd) {
+    sockaddr_storage client_address;
+    socklen_t client_len = sizeof(client_address);
+    return ::accept(fd, (struct sockaddr*) &client_address, &client_len);
+}
+    
 } // namespace platform

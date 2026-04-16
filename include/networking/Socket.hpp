@@ -56,8 +56,18 @@ public:
         return Policy::send(fd_, buf);
     }
 
-    std::size_t recv(std::span<const std::byte> buf) {
+    std::size_t recv(std::span<std::byte> buf) {
         return Policy::recv(fd_, buf);
+    }
+
+    std::error_code listen(int backlog) {
+        return Policy::listen(fd_, backlog);
+    }
+
+    // This can return an invalid socket
+    // Consider returning a struct or pair with fd and errno
+    Socket accept() {
+        return Socket(Policy::accept(fd_));
     }
 
     int native_handle() const noexcept { return fd_; }
@@ -80,5 +90,6 @@ public:
             
 
 private:
+    explicit Socket(int fd) : fd_(fd) {}
     int fd_{-1};
 };

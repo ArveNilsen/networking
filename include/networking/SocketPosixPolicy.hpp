@@ -15,6 +15,8 @@ struct SocketPosixPolicy {
     static std::error_code bind(int fd, std::string_view addr);
     static std::size_t send(int fd, std::span<const std::byte> buf);
     static std::size_t recv(int fd, std::span<std::byte> buf);
+    static std::error_code listen(int fd, int backlog);
+    static int accept(int fd);
 };
 
 } // namespace platform

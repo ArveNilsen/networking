@@ -11,7 +11,7 @@ target_sources(main
         $<$<PLATFORM_ID:Darwin>:InitOthers.cpp>
 
         $<$<PLATFORM_ID:Darwin>:SocketPosixPolicy.cpp>
-        $<$<PLATFORM_ID:Darwin>:SocketWindowsPolicy.cpp>
+        $<$<PLATFORM_ID:Windows>:SocketWindowsPolicy.cpp>
 
     
     PUBLIC 
@@ -28,7 +28,7 @@ target_sources(main
 
         # Platform specific headers
         $<$<PLATFORM_ID:Darwin>:../include/networking/SocketPosixPolicy.hpp>
-        $<$<PLATFORM_ID:Darwin>:../include/networking/SocketWindowsPolicy.hpp>
+        $<$<PLATFORM_ID:Windows>:../include/networking/SocketWindowsPolicy.hpp>
 )
 
 target_link_libraries(main
